@@ -1,0 +1,243 @@
+//Cas9 photos taken from video (https://www.youtube.com/watch?v=jAhjPd4uNFY)- Kurzgesagt
+//Cancer cell photos taken from video (https://www.youtube.com/watch?v=JQVmkDUkZT4)-Kurzgesagt
+//Coding assistance from Maximus Smith and Mahatru Miryala
+
+var xVel=0;
+var yVel=0;
+var arrowkeywidth=getProperty("arrowkeys", "width");
+var arrowkeyheight=getProperty("arrowkeys", "height");
+var cas9width=getProperty("cas_9", "width");
+var cas9height=getProperty("cas_9", "height");
+var keys= [false, false, false, false];
+var lives= 3;
+
+/*
+keys[0]->Up
+keys[1]->Down
+keys[2]->Left
+keys[3]->Right
+*/
+
+//Go to Informational Screen
+onEvent("Start_btn", "click", function() {
+setScreen("Backstory");
+hideElement("Next");
+write("The cancer is spreading... Hello " +getText("name_input")+", " + "you are Cas9, a protein that matches DNA sequences and makes cells resistant to disease.");
+write("Your job as Cas9 is to stop the cancer from spreading more and make your host's cells resistant to it. Manuever around the cancer cells to avoid death and collect the right sequences of base pairs to save your dying host's body. Once that's completed, the doctors can use their technology and methods of genome editing to save the dying body!");
+
+//Next screen Button appears
+setTimeout(function() {
+showElement("Next");
+}, 2450);
+
+//Cas9 protein moves and destroys cancer cell (Makes popping noise when destroyed)
+var cas9X=5;
+var count=0;
+timedLoop(10, function() {
+if (count<120) {
+  count++;
+  setPosition("cas9", cas9X, 210);
+  cas9X=cas9X+1;
+}
+else {
+stopTimedLoop();
+playSound("REEEEE That works.mp3");
+setImageURL("cancer1", "imageedit_1_2568975605.gif");
+setTimeout(function() {
+hideElement("cancer1");
+}, 450);
+}
+});
+});
+
+//Go to Instructions & Beyond
+onEvent("Next", "click", function() {
+setScreen("Instructions");
+hideElement("next_btn2");
+setTimeout(function() {
+showElement("next_btn2");
+}, 7000);
+
+
+//Smooth transition walking for arrowkey sprite
+hideElement("arrowkeys");
+setTimeout(function() {
+showElement("arrowkeys");
+}, 100);
+
+timedLoop(17, function() {
+    update();
+  });
+});
+
+onEvent("Instructions", "keydown", function(event){
+if(event.key == "Up"){
+  keys[0] = true;
+  } else if (event.key=="Down"){
+  keys[1] = true;
+  } else if (event.key=="Left") {
+  keys[2] = true;
+  } else if (event.key=="Right"){
+  keys[3] = true;
+  }
+});
+
+
+onEvent("Instructions", "keyup", function(event){
+if(event.key == "Up"){
+  keys[0] = false;
+  } else if (event.key=="Down"){
+  keys[1] = false;
+  } else if (event.key=="Left") {
+  keys[2] = false;
+  } else if (event.key=="Right"){
+  keys[3] = false;
+  }
+});
+
+//Arrowkeys movement for Instruction page
+function update() {
+   xVel = 0;
+   yVel = 0;
+   if (keys[0]) {
+      yVel+=-5;
+    }
+   if (keys[1]) {
+      yVel+=5;
+    }
+   if (keys[2]) {
+      xVel+=-5;
+    }
+   if (keys[3]) {
+      xVel+=5;
+    }
+   var newX = getXPosition("arrowkeys")+xVel;
+   var newY = getYPosition("arrowkeys")+yVel;
+   if (newX >0 && newX + arrowkeywidth <320 && 
+    newY>0 && newY + arrowkeyheight<450) {
+      setPosition("arrowkeys", newX, newY);
+    }
+}
+stopTimedLoop();
+
+//First level Screen + Cas9 position (Random AI for cancer cell movement)
+onEvent("next_btn2", "click", function() {
+  setScreen("GameScreen1");
+  setPosition("cas_9", 10, 415);
+  timedLoop(17, function() {
+  update2();
+  });
+});
+  
+/*if (__) {
+    setPosition("cas_9", 10, 415);
+    lives = lives--;
+    if (lives===0) {
+      setScreen("Lose");
+    }
+  
+  }
+  */
+  
+  
+  //SHORTCUT
+  onEvent("Welcome","keypress",function(event){
+    if(event.key == 1){
+      setScreen("GameScreen1");
+    }
+});
+
+
+ 
+  
+//CANCER Movement 430 Y (X 160 - 320) = 160 Pixels
+//var cancerX=0;
+var count=0;
+timedLoop(10,function () {
+
+if (count <= 160) {
+  setPosition("cancer",320-count,400);
+  count++;
+}else if ((count>= 160)&&(count<=320)){
+  setPosition("cancer",count,400);
+  count++;
+}else{
+  count=0;
+}});
+
+
+
+
+
+
+
+
+
+//Movement for First Level
+onEvent("GameScreen1", "keydown", function(event){
+if(event.key == "Up"){
+  keys[0] = true;
+  } else if (event.key=="Down"){
+  keys[1] = true;
+  } else if (event.key=="Left") {
+  keys[2] = true;
+  } else if (event.key=="Right"){
+  keys[3] = true;
+  }
+});
+
+//Stop Movement for First Level
+onEvent("GameScreen1", "keyup", function(event){
+if(event.key == "Up"){
+  keys[0] = false;
+  } else if (event.key=="Down"){
+  keys[1] = false;
+  } else if (event.key=="Left") {
+  keys[2] = false;
+  } else if (event.key=="Right"){
+  keys[3] = false;
+  }
+});
+
+//Movement function for First Level
+function update2() {
+   xVel = 0;
+   yVel = 0;
+   
+   if (keys[0]) {
+      yVel+=-3;
+    }
+   if (keys[1]) {
+      yVel+=3;
+    }
+   if (keys[2]) {
+      setImageURL("cas_9", "reeeeeeeeeeee.png");
+      xVel+=-3;
+    }
+   if (keys[3]) {
+     setImageURL("cas_9","imageedit_2_6741814229.png");
+     xVel+=3;
+    }
+   var newX2 = getXPosition("cas_9")+xVel;
+   var newY2 = getYPosition("cas_9")+yVel;
+   if (newX2 >0 && newX2 + cas9width <318 && 
+    newY2>0 && newY2 + cas9height<448) {
+      setPosition("cas_9", newX2, newY2);
+      
+
+    }
+}
+//Sends player back to beginning screen from win Screen
+onEvent("Playback2", "click", function() {
+setScreen("Welcome");
+});
+
+//Sends player back to First level from Lose screen
+onEvent("Playback", "click", function() {
+setScreen("GameScreen1");
+});
+
+
+
+
+
